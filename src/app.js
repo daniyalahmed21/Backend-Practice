@@ -1,64 +1,33 @@
 const express = require("express")
-const app  = express()
+const app = express()
 
-const users = [{
-    name: "John",
-    kidneys : [{
-        healthy : false
-    }]
-}]
+//express is a series of middleware even the last route handler is also a middleware technically even though it is not in the middle
 
-app.use(express.json())
 
-//delete all unhealthy kidneys
-app.delete("/",(req,res)=>{
-    let newKidneys = []
-    for(let i = 0; i<users[0].kidneys.length;i++){
-        if(users[0].kidneys[i].healthy){
-            users[0].kidneys.push(users[0].kidneys[i])
-        }
+let requestCount = 0
+
+//global middleware run before any request and act as checker that let only 18+ people to proceed further
+function isOldEnoughMiddleware (req,res,next){
+    requestCount++
+    console.log(`Number of Request : ${requestCount}`)
+    const age = req.query.age 
+    if(age>18){
+        next()
     }
-    users[0].kidneys=newKidneys
-    res.send("Unhealthy kidneys Deleted ...")
-})
-
-
-//make all kidneys healthy
-app.put("/",(req,res)=>{
-    for(let i=0;i<users[0].kidneys.length;i++){
-        users[0].kidneys[i].healthy = true
+    else{
+        res.send("Sorry your are not of age yet")
     }
-    res.send("Done ...")
-})
+}
 
-//add healthy kidneys
-app.post("/",(req,res)=>{
-   const isHealthy =  req.body.isHealthy
-   users[0].kidneys.push({
-    healthy:isHealthy
-   })
-   res.send("Kidney added")
-})
+app.use(isOldEnoughMiddleware)
 
-//fetch all kidneys data
-app.get("/",(req,res)=>{
-    const johnKidneys = users[0].kidneys
-    const numberOfKidneys = johnKidneys.length
-    let numberOfHealthyKidneys = 0
-    for(let i = 0 ; i<numberOfKidneys ; i++){
-        if(johnKidneys[i].healthy == true){
-            numberOfHealthyKidneys++;
-        }
-    }
-    const numberOfUnhealthyKidneys = numberOfKidneys - numberOfHealthyKidneys
-
-    res.json({
-        numberOfKidneys,
-        numberOfHealthyKidneys,
-        numberOfUnhealthyKidneys
-    })
+app.get("/ride1",(req,res)=>{
+    res.send("You have ridden ride 1")
 })
 
 
+app.get("/ride2",(req,res)=>{
+    res.send("You have ridden ride 2")
+})
 
 app.listen(3000)
