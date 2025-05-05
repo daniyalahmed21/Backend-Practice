@@ -1,10 +1,9 @@
 const express = require("express")
 const app = express()
 
-
-app.get("/add",(req,res)=>{
-    const a = parseInt(req.query.a)
-    const b = parseInt(req.query.b)
+app.get("/sum",(req,res)=>{
+    const a = parseInt(req.body.a)
+    const b = parseInt(req.body.b)
     res.send(`Result ${a+b}`)
 })
 app.get("/subtract",(req,res)=>{
