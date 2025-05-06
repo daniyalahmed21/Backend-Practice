@@ -3,21 +3,64 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.9.0/axios.min.js" integrity="sha512-FPlUpimug7gt7Hn7swE8N2pHw/+oQMq/+R/hH/2hZ43VOQ+Kjh25rQzuLyPz7aUWKlRpI7wXbY6+U3oFPGjPOA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.9.0/axios.min.js"
+      integrity="sha512-FPlUpimug7gt7Hn7swE8N2pHw/+oQMq/+R/hH/2hZ43VOQ+Kjh25rQzuLyPz7aUWKlRpI7wXbY6+U3oFPGjPOA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <title>Frontend</title>
     <script>
-      function sendRequest() {
-        axios.post("http://localhost:3000/sum",{
-            a : document.getElementById("a").value,
-            b : document.getElementById("b").value
-        })
-        
+      async function signup() {
+        await axios.post("http://localhost:3000/signup", {
+          username: document.getElementById("username-signup").value,
+          password: document.getElementById("password-signup").value,
+        });
+
+        alert("User signed up !");
       }
+
+      async function signin() {
+        const response = await axios.post("http://localhost:3000/signin", {
+          username: document.getElementById("username-signin").value,
+          password: document.getElementById("password-signin").value,
+        });
+
+        console.log(response.data);
+        localStorage.setItem("token", response.data);
+
+        alert("User signed in !");
+      }
+
+      async function getUserInformation() {
+        const token = localStorage.getItem("token");
+        const response = await axios.get("http://localhost:3000/me", {
+          headers: {
+            token,
+          },
+        });
+        document.getElementById("user-information").innerHTML =
+          "Username: " +
+          response.data.username +
+          " Password: " +
+          response.data.password;
+      }
+      getUserInformation();
     </script>
   </head>
   <body>
-    <input id="a" type="text" />
-    <input id="b" type="text" />
-    <button onclick="sendRequest()">Sum</button>
+    <h1>Sign Up</h1>
+    <input id="username-signup" type="text" placeholder="username" />
+    <input id="password-signup" type="text" placeholder="password" />
+    <button onclick="signup()">Signup</button>
+    <br />
+    <h1>Sign In</h1>
+    <input id="username-signin" type="text" placeholder="username" />
+    <input id="password-signin" type="text" placeholder="password" />
+    <button onclick="signin()">Signin</button>
+    <br />
+    <h1>User Information</h1>
+    <br />
+    <div id="user-information"></div>
   </body>
 </html>
